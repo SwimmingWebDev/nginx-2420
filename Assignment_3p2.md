@@ -113,9 +113,10 @@ server {
 
 ### Step 8. Test **backend**
 
+❗These commands should be run from your host machine, not your server
+
 - Replace the ip address below with your own.<br>
   `curl http://137.184.181.176`
-  ❗These commands should be run from your host machine, not your server
 
 ```bash
 curl http://137.184.181.176/backend/hey`
