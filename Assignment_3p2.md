@@ -19,9 +19,42 @@
 - You can get extra information, including the default policies<br>
   `ufw status verbose`
 
-### Step 3. Place **backend** binary
+### Step 3. Create **backend** binary
 
-- `sudo mkdir -p bin/backend`
+- `sudo mkdir /web/html/nginx-2420/backend`
+- Create `hey` and `echo` binary
+- Create `index.html` each place
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2420</title>
+    <style>
+      * {
+        color: #db4b4b;
+        background: #16161e;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      h1 {
+        text-align: center;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>All your base are belong to us</h1>
+  </body>
+</html>
+```
 
 ### Step 4. transfer backend `hello-server` to your servers with `sftp`
 
@@ -29,7 +62,7 @@
   `sftp -i ~/.ssh/do-key user@ip-address`
 - Upload file : `put <file-path>`
 
-❗Make sure to place `hello-server` into `$HOME/bin/backend`
+❗Make sure to place `hello-server` into `/web/html/nginx-2420/backend/`
 
 ### Step 5. Create a a new service file to run the backend
 
@@ -56,16 +89,24 @@ WantedBy=multi-user.target
 
 ```bash
 server {
-listen 80;
-server_name _;
-root /web/html/nginx-2420;
-location / {
-    index index.html index.htm;
+    listen 80;
+    listen [::]:80;
+    server_name _;
+    root /web/html/nginx-2420;
+    location / {
+        index index.php index.html index.htm;
     }
-}
 
-location /backend {
-    proxy_pass <http://127.0.0.1:8080>;
+    location /backend/ {
+            proxy_pass http://127.0.0.1:8080;
+    }
+
+    location /backend/hey {
+            proxy_pass http://127.0.0.1:8080/hey;
+    }
+    location /backend/echo {
+            proxy_pass http://127.0.0.1:8080/echo;
+    }
 }
 
 ```
